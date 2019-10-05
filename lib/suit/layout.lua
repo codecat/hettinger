@@ -15,6 +15,7 @@ function Layout:reset(x,y, padx,pady)
 	self._widths = {}
 	self._heights = {}
 	self._isFirstCell = true
+	self._startX = x or 0
 
 	return self
 end
@@ -50,6 +51,7 @@ function Layout:push(x,y)
 		self._w, self._h,
 		self._widths,
 		self._heights,
+		self._startX,
 	}
 
 	return self:reset(x,y, padx or self._padx, pady or self._pady)
@@ -61,7 +63,8 @@ function Layout:pop()
 	self._x, self._y,
 	self._padx,self._pady,
 	self._w, self._h,
-	self._widths, self._heights = unpack(self._stack[#self._stack])
+	self._widths, self._heights,
+	self._startX = unpack(self._stack[#self._stack])
 	self._isFirstCell = false
 	self._stack[#self._stack] = nil
 
@@ -186,6 +189,11 @@ function Layout:left(w, h)
 	self._x, self._w, self._h = x, w, h
 
 	return x,y,w,h
+end
+
+function Layout:newline(w, h)
+	self._x = self._startX
+	return self:row(w, h)
 end
 
 local function layout_iterator(t, idx)
