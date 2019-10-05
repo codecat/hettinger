@@ -113,6 +113,10 @@ class Game
 		love.graphics.rectangle "fill", 0, 0, @width, 100
 
 		love.graphics.setColor 0.10, 0.12, 0.13
+
+		love.graphics.setFont @font_normal
+		love.graphics.printf "Day " .. @day_count, @width / 2 - 100, 14, 200, "center"
+
 		love.graphics.setFont @font_status
 		love.graphics.printf "$" .. @money, @width / 2 - 300, 38, 600, "center"
 
