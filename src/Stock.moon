@@ -9,17 +9,26 @@ class Stock
 	days_in_delta: 0
 
 	lowest_possible: 3
-	random_range: 6
+
+	random_range_low: -6
+	random_range_high: 6
 
 	player_purchased_today: 0
 
-	new: (id, name) =>
+	new: (id, name, initialPrice, rangeLow, rangeHigh) =>
 		@id = id
 		@name = name
 
-		@price = love.math.random(70, 130)
-		@price_delta = love.math.random(-10, 10)
+		@price = initialPrice or 100
+		@price += love.math.random -50, 50
+		if @price < @lowest_possible
+			@price = @lowest_possible
+
+		@price_delta = love.math.random -10, 10
 		@price_yesterday = @price + @price_delta
+
+		@random_range_low = rangeLow or -6
+		@random_range_high = rangeHigh or 6
 
 	getPrice: => @price
 	getPriceYesterday: => @price_yesterday
@@ -33,16 +42,16 @@ class Stock
 		--@price += @player_purchased_today * 2
 		@player_purchased_today = 0
 
-		rangeStart = @price_delta - @random_range
-		rangeEnd = @price_delta + @random_range
+		rangeStart = @price_delta + @random_range_low
+		rangeEnd = @price_delta + @random_range_high
 
 		delta = love.math.random(rangeStart, rangeEnd)
 		@price += delta
 
 		print @id .. ": " .. delta
 
-		deltaRangeStart = -@random_range
-		deltaRangeEnd = @random_range
+		deltaRangeStart = @random_range_low
+		deltaRangeEnd = @random_range_high
 
 		if @days_in_delta > 2
 			if @price_delta < 0
