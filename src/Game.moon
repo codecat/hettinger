@@ -98,18 +98,23 @@ class Game
 			suit.Label Utils.formatThousands("$" .. price), suit.layout\col!
 
 			change = price - priceYesterday
+
+			changeText = Utils.formatThousands(change)
+			if change > 0
+				changeText = "+" .. changeText
+
 			changeOptions =
 				color:
 					normal:
 						fg: { 0.10, 0.12, 0.13 }
 				font: @font_normal_bold
 
-			if price > priceYesterday
+			if change > 0
 				changeOptions.color.normal.fg = { 0.10, 0.80, 0.13 }
-			elseif price < priceYesterday
+			elseif change < 0
 				changeOptions.color.normal.fg = { 0.80, 0.12, 0.13 }
 
-			suit.Label Utils.formatThousands("$" .. change), changeOptions, suit.layout\col!
+			suit.Label "$" .. changeText, changeOptions, suit.layout\col!
 
 			suit.Label ownedStock.amount, suit.layout\col!
 			suit.Label Utils.formatThousands("$" .. (ownedStock.amount * price)), suit.layout\col!
