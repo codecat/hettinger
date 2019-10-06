@@ -1,2 +1,5 @@
 # Compiled Lua files
 src/**/*.lua
+
+# Loveman Release
+Release/
