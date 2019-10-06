@@ -7,7 +7,7 @@ class StoryDay2 extends StoryDay
 
 	onStartOfDay: =>
 		if g_game\hasFlag "day1_skip_100"
-			g_game\giveMoney 200
+			g_game\giveMoney 200, "From police officer"
 		g_game.force_action = true
 
 	getText: =>
@@ -35,13 +35,13 @@ class StoryDay2 extends StoryDay
 
 	makeInterface: =>
 		if suit.Button("Spend $10 on food and sleep until morning", suit.layout\row(300, 30)).hit
-			g_game\takeMoney 10
+			g_game\takeMoney 10, "Daily expenses"
 			g_game\nextDay!
 			return
 
 		if @stage == 0
 			if suit.Button("Scavenge pile of garbage", suit.layout\col(200, 30)).hit
-				g_game\giveMoney 20
+				g_game\giveMoney 20, "Found in trash"
 				g_game\nextStoryStage!
 
 	isStocksInterfaceAvailable: => false

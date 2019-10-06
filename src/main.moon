@@ -1,7 +1,10 @@
 Game = require "src.Game"
 export g_game
 
-love.load = -> g_game = Game!
+love.load = ->
+	g_game = Game!
+	g_game\start!
+
 love.update = (dt) -> g_game\update dt
 love.draw = -> g_game\draw!
 

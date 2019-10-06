@@ -9,12 +9,16 @@ StoryDay3 = require "src.story.StoryDay3"
 
 StockManager = require "src.StockManager"
 Portfolio = require "src.Portfolio"
+History = require "src.History"
 
 easeInQuart = (x) -> x * x * x * x
 
 class Game
 	width: 1024
 	height: 768
+
+	content_left: 250
+	content_right: 10
 
 	day_count: 0
 	story_day: nil
@@ -29,6 +33,7 @@ class Game
 
 	stock_manager: nil
 	portfolio: nil
+	history: nil
 
 	new: =>
 		@font_normal = love.graphics.newFont 12
@@ -37,6 +42,7 @@ class Game
 
 		@stock_manager = StockManager!
 		@portfolio = Portfolio!
+		@history = History!
 
 		suit.theme.cornerRadius = 2
 		suit.theme.color =
@@ -50,7 +56,9 @@ class Game
 				bg: { 0.77, 0.74, 0.73 }
 				fg: { 0.10, 0.12, 0.13 }
 
+	start: =>
 		@nextDay!
+		@giveMoney 5000, "Test money lorem ipsum dolor sit amet"
 
 	keypressed: (key, scancode, isrepeat) => suit.keypressed key
 	textedited: (text, start, length) => suit.textedited text, start, length
@@ -67,7 +75,7 @@ class Game
 
 	makeInterface: =>
 		interface_y = 150 + @story_text\getHeight! + 20
-		suit.layout\reset 200, interface_y, 4, 4
+		suit.layout\reset @content_left, interface_y, 4, 4
 
 		@story_day\makeInterface!
 
@@ -75,7 +83,7 @@ class Game
 
 	makeStocksInterface: =>
 		x, y = suit.layout\row 100, 30
-		suit.layout\reset 200, y + 20, 4, 4
+		suit.layout\reset @content_left, y + 20, 4, 4
 
 		headerOptions =
 			color:
@@ -121,7 +129,7 @@ class Game
 
 			if @money >= price
 				if suit.Button("Buy", { id: "buy_" .. stock.id }, suit.layout\col(60, 30)).hit
-					@money -= price
+					@takeMoney price, "Bought " .. stock.name .. " stock"
 					@portfolio\addStock stock.id, 1
 					stock\onBought 1
 			else
@@ -129,14 +137,19 @@ class Game
 
 			if ownedStock.amount > 0
 				if suit.Button("Sell", { id: "sell_" .. stock.id }, suit.layout\col(60, 30)).hit
-					@money += price
+					@giveMoney price, "Sold " .. stock.name .. " stock"
 					@portfolio\removeStock stock.id, 1
 					stock\onSold 1
 			else
 				suit.layout\col(60, 30)
 
-	giveMoney: (amount) => @money += amount
-	takeMoney: (amount) => @money -= amount
+	giveMoney: (amount, description) =>
+		@money += amount
+		@history\add amount, description
+
+	takeMoney: (amount, description) =>
+		@money -= amount
+		@history\add -amount, description
 
 	makeDay: =>
 		return StoryDay1! if @day_count == 1
@@ -164,7 +177,7 @@ class Game
 
 	updateStoryText: =>
 		@story_text = love.graphics.newText @font_normal, ""
-		@story_text\setf @story_day\getText!, @width - 400, "left"
+		@story_text\setf @story_day\getText!, @width - @content_left - @content_right, "left"
 
 	nextStoryStage: =>
 		@story_day.stage += 1
@@ -191,13 +204,15 @@ class Game
 		love.graphics.printf Utils.formatThousands("$" .. @money), @width / 2 - 300, 44, 600, "center"
 
 	drawStoryText: =>
-		love.graphics.draw @story_text, 200, 150
+		love.graphics.draw @story_text, @content_left, 150
 
 	draw: =>
 		love.graphics.clear 0.97, 0.95, 0.94
 
 		@drawStatusBar!
 		@drawStoryText!
+
+		@history\draw!
 
 		love.graphics.setFont @font_normal
 		suit.draw!
