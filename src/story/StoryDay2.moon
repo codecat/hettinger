@@ -6,19 +6,19 @@ class StoryDay2 extends StoryDay
 	new: => super!
 
 	onStartOfDay: =>
-		if g_game\hasFlag "day1_skip_100"
-			g_game\giveMoney 200, "From police officer"
+		if g_game\hasFlag "day1_skip_money_on_floor"
+			g_game\giveMoney 100, "From police officer"
 		g_game.force_action = true
 
 	getText: =>
 		ret   = "You had nowhere to go last night, so you decided to sleep in between some buildings, since it provided"
 		ret ..= " a little bit of cover from the rain that decided to pour down."
 
-		if g_game\hasFlag "day1_skip_100"
-			ret ..= "\n\nA police officer walks up to you. Feeling sorry for how you've slept all night, he gives you $200"
-			ret ..= " to spend on necessities. \"Hey, I found this $100 bill earlier today on the street! Can you believe"
+		if g_game\hasFlag "day1_skip_money_on_floor"
+			ret ..= "\n\nA police officer walks up to you. Feeling sorry for how you've slept all night, he gives you $100"
+			ret ..= " to spend on necessities. \"Hey, I found this $50 bill earlier today on the street! Can you believe"
 			ret ..= " it??\" He laughed. You feel a little better about not picking up someone else's money yesterday. You"
-			ret ..= " accept the $200 from the police officer and thank him."
+			ret ..= " accept the money from the police officer and thank him."
 
 		ret ..= "\n\nSuddenly, you recall you have some knowledge about the stock market! Walking around the town for"
 		ret ..= " a few minutes, you find a big building that says: \"Stocks\". A bit on the nose, but okay. Right next"

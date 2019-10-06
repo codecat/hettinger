@@ -1,4 +1,5 @@
 Game = require "src.Game"
+
 export g_game
 
 love.load = ->

@@ -29,11 +29,14 @@ class Game
 	intro_timer: 4.0
 
 	money: 0
+	money_max: 0
 	daily_cost: 10
 
 	stock_manager: nil
 	portfolio: nil
 	history: nil
+
+	game_over: false
 
 	new: =>
 		@font_normal = love.graphics.newFont 12
@@ -76,9 +79,15 @@ class Game
 		interface_y = 150 + @story_text\getHeight! + 20
 		suit.layout\reset @content_left, interface_y, 4, 4
 
-		@story_day\makeInterface!
-
-		@makeStocksInterface! if @story_day\isStocksInterfaceAvailable!
+		if @game_over
+			suit.layout\push @width / 2 - 96, @height / 2 + 76
+			if suit.Button("Restart game", suit.layout\row(192, 20)).hit
+				export g_game = Game!
+				g_game\start!
+			suit.layout\pop!
+		else
+			@story_day\makeInterface!
+			@makeStocksInterface! if @story_day\isStocksInterfaceAvailable!
 
 	makeStocksInterface: =>
 		x, y = suit.layout\row 100, 30
@@ -144,11 +153,16 @@ class Game
 
 	giveMoney: (amount, description) =>
 		@money += amount
+		if @money > @money_max
+			@money_max = @money
 		@history\add amount, description
 
 	takeMoney: (amount, description) =>
 		@money -= amount
 		@history\add -amount, description
+
+		if @money < 0
+			@game_over = true
 
 	makeDay: =>
 		return StoryDay1! if @day_count == 1
@@ -213,20 +227,31 @@ class Game
 
 		@history\draw!
 
+		if @game_over
+			love.graphics.setColor 1 - 0.97, 1 - 0.95, 1 - 0.94, 0.5
+			love.graphics.rectangle "fill", 0, 0, @width, @height
+
+			love.graphics.setColor 1 - 0.97, 1 - 0.95, 1 - 0.94
+			love.graphics.rectangle "fill", @width / 2 - 200, @height / 2 - 100, 400, 200, 2, 2
+
+			love.graphics.setColor 1 - 0.10, 1 - 0.12, 1 - 0.13
+			love.graphics.setFont @font_normal_bold
+			love.graphics.printf "GAME OVER", @width / 2 - 200, @height / 2 - 90, 400, "center"
+
 		love.graphics.setFont @font_normal
 		suit.draw!
 
-		if @intro_timer > 0
+		if not @game_over and @intro_timer > 0
 			alpha = @intro_timer
 			if alpha > 1.0
 				alpha = 1.0
 			alpha = easeInQuart alpha
 
-			love.graphics.setColor(1 - 0.97, 1 - 0.95, 1 - 0.94, alpha)
-			love.graphics.rectangle("fill", 0, 0, @width, @height)
+			love.graphics.setColor 1 - 0.97, 1 - 0.95, 1 - 0.94, alpha
+			love.graphics.rectangle "fill", 0, 0, @width, @height
 
 			if @intro_timer < 3.25
-				love.graphics.setColor(1 - 0.10, 1 - 0.12, 1 - 0.13, alpha)
+				love.graphics.setColor 1 - 0.10, 1 - 0.12, 1 - 0.13, alpha
 				love.graphics.setFont @font_status
 				love.graphics.printf "Day " .. @day_count, @width / 2 - 300, @height / 2 - 60, 600, "center"
 

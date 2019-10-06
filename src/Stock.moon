@@ -9,7 +9,7 @@ class Stock
 	days_in_delta: 0
 
 	lowest_possible: 3
-	random_range: 5
+	random_range: 6
 
 	player_purchased_today: 0
 
@@ -35,7 +35,11 @@ class Stock
 
 		rangeStart = @price_delta - @random_range
 		rangeEnd = @price_delta + @random_range
-		@price += love.math.random(rangeStart, rangeEnd)
+
+		delta = love.math.random(rangeStart, rangeEnd)
+		@price += delta
+
+		print @id .. ": " .. delta
 
 		deltaRangeStart = -@random_range
 		deltaRangeEnd = @random_range
@@ -43,16 +47,16 @@ class Stock
 		if @days_in_delta > 2
 			if @price_delta < 0
 				deltaRangeStart = 0
+				deltaRangeEnd *= 2
 			elseif @price_delta > 0
 				deltaRangeEnd = 0
+				deltaRangeStart *= 2
 
 		deltaBefore = @price_delta
 		@price_delta += love.math.random(deltaRangeStart, deltaRangeEnd)
 
 		if (deltaBefore > 0 and @price_delta < 0)
 			@days_in_delta = 0
-
-		print @id .. " new delta: " .. @price_delta .. " (days in delta: " .. @days_in_delta .. ")"
 
 		@days_in_delta += 1
 
