@@ -8,4 +8,5 @@ class CrazyRidesStock extends Stock
 
 	onEndOfDay: =>
 		if g_game.day_count == 3
-			@price_delta = love.math.random @random_range + 1, @random_range + 5
+			@price_delta = love.math.random 4, 8
+			@days_in_delta = 0

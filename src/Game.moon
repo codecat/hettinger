@@ -11,8 +11,6 @@ StockManager = require "src.StockManager"
 Portfolio = require "src.Portfolio"
 History = require "src.History"
 
-easeInQuart = (x) -> x * x * x * x
-
 class Game
 	width: 1024
 	height: 768
@@ -41,6 +39,7 @@ class Game
 	new: =>
 		@font_normal = love.graphics.newFont 12
 		@font_normal_bold = love.graphics.newFont "res/fonts/VeraBd.ttf", 12
+		@font_mono = love.graphics.newFont "res/fonts/Cascadia.ttf", 12
 		@font_status = love.graphics.newFont 24
 
 		@stock_manager = StockManager!
@@ -90,28 +89,41 @@ class Game
 			@makeStocksInterface! if @story_day\isStocksInterfaceAvailable!
 
 	makeStocksInterface: =>
-		x, y = suit.layout\row 100, 30
+		x, y = suit.layout\row 100, 20
 		suit.layout\reset @content_left, y + 20, 4, 4
 
+		if love.keyboard.isDown "f3"
+			if suit.Button("(dev) simulate stock day", suit.layout\row(200, 20)).hit
+				@stock_manager\onEndOfDay!
+				@stock_manager\onStartOfDay!
+
 		headerOptions =
+			font: @font_normal_bold
 			color:
 				normal:
 					fg: { 0.60, 0.62, 0.63 }
-			font: @font_normal_bold
 
-		suit.Label "STOCK", headerOptions, suit.layout\newline(100, 30)
-		suit.Label "PRICE", headerOptions, suit.layout\col!
+		suit.Label "STOCK", headerOptions, suit.layout\newline(264, 20)
+		suit.Label "PRICE", headerOptions, suit.layout\col(80, 20)
 		suit.Label "CHANGE", headerOptions, suit.layout\col!
-		suit.Label "OWNED", headerOptions, suit.layout\col!
-		suit.Label "WORTH", headerOptions, suit.layout\col!
+		suit.Label "OWNED", headerOptions, suit.layout\col(60, 20)
+		suit.Label "WORTH", headerOptions, suit.layout\col(80, 20)
 
 		for stock in *@stock_manager.stocks
 			ownedStock = @portfolio\getOwnedStock(stock.id)
 			price = stock\getPrice!
 			priceYesterday = stock\getPriceYesterday!
 
-			suit.Label stock.id, suit.layout\newline(100, 30)
-			suit.Label Utils.formatThousands("$" .. price), suit.layout\col!
+			stockIdOptions =
+				align: "right"
+				font: @font_mono
+				color:
+					normal:
+						fg: { 0.60, 0.62, 0.63 }
+
+			suit.Label stock.id, stockIdOptions, suit.layout\newline(40, 20)
+			suit.Label stock.name, { align: "left" }, suit.layout\col(220, 20)
+			suit.Label Utils.formatThousands("$" .. price), suit.layout\col(80, 20)
 
 			change = price - priceYesterday
 
@@ -132,24 +144,24 @@ class Game
 
 			suit.Label "$" .. changeText, changeOptions, suit.layout\col!
 
-			suit.Label ownedStock.amount, suit.layout\col!
-			suit.Label Utils.formatThousands("$" .. (ownedStock.amount * price)), suit.layout\col!
+			suit.Label Utils.formatThousands(ownedStock.amount), suit.layout\col(60, 20)
+			suit.Label Utils.formatThousands("$" .. (ownedStock.amount * price)), suit.layout\col(80, 20)
 
 			if @money >= price
-				if suit.Button("Buy", { id: "buy_" .. stock.id }, suit.layout\col(60, 30)).hit
+				if suit.Button("Buy", { id: "buy_" .. stock.id }, suit.layout\col(60, 20)).hit
 					@takeMoney price, "Bought " .. stock.name .. " stock"
 					@portfolio\addStock stock.id, 1
 					stock\onBought 1
 			else
-				suit.layout\col(60, 30)
+				suit.layout\col(60, 20)
 
 			if ownedStock.amount > 0
-				if suit.Button("Sell", { id: "sell_" .. stock.id }, suit.layout\col(60, 30)).hit
+				if suit.Button("Sell", { id: "sell_" .. stock.id }, suit.layout\col(60, 20)).hit
 					@giveMoney price, "Sold " .. stock.name .. " stock"
 					@portfolio\removeStock stock.id, 1
 					stock\onSold 1
 			else
-				suit.layout\col(60, 30)
+				suit.layout\col(60, 20)
 
 	giveMoney: (amount, description) =>
 		@money += amount
@@ -178,6 +190,9 @@ class Game
 				@stock_manager\onEndOfDay!
 
 		@intro_timer = 4.0
+		if love.keyboard.isDown "f3"
+			@intro_timer = 1.0
+
 		@day_count += 1
 
 		@story_day = @makeDay!
@@ -251,7 +266,7 @@ class Game
 			alpha = @intro_timer
 			if alpha > 1.0
 				alpha = 1.0
-			alpha = easeInQuart alpha
+			alpha = alpha * alpha * alpha * alpha
 
 			love.graphics.setColor 1 - 0.97, 1 - 0.95, 1 - 0.94, alpha
 			love.graphics.rectangle "fill", 0, 0, @width, @height

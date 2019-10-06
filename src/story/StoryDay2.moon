@@ -34,13 +34,13 @@ class StoryDay2 extends StoryDay
 		return ret
 
 	makeInterface: =>
-		if suit.Button("Spend $10 on food and sleep until morning", suit.layout\row(300, 30)).hit
+		if suit.Button("Spend $10 on food and sleep until morning", suit.layout\row(300, 20)).hit
 			g_game\takeMoney 10, "Daily expenses"
 			g_game\nextDay!
 			return
 
 		if @stage == 0
-			if suit.Button("Scavenge pile of garbage", suit.layout\col(200, 30)).hit
+			if suit.Button("Scavenge pile of garbage", suit.layout\col(200, 20)).hit
 				g_game\giveMoney 20, "Found in trash"
 				g_game\nextStoryStage!
 

@@ -12,7 +12,7 @@ class StoryDay
 
 	getText: => "A new day begins."
 	makeInterface: =>
-		if suit.Button("Sleep until morning ($" .. Utils.formatThousands(g_game.daily_cost) .. ")", suit.layout\row(200, 30)).hit
+		if suit.Button("Sleep until morning ($" .. Utils.formatThousands(g_game.daily_cost) .. ")", suit.layout\row(200, 20)).hit
 			g_game\takeMoney g_game.daily_cost, "Daily expenses"
 			g_game\nextDay!
 

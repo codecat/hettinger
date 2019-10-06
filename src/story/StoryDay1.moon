@@ -20,7 +20,7 @@ class StoryDay1 extends StoryDay
 		return ret
 
 	makeInterface: =>
-		if suit.Button("Sleep until morning", suit.layout\row(200, 30)).hit
+		if suit.Button("Sleep until morning", suit.layout\row(200, 20)).hit
 			g_game\nextDay!
 
 		if @stage == 0

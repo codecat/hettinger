@@ -8,16 +8,18 @@ class Stock
 	price_delta: 0
 	days_in_delta: 0
 
-	lowest_possible: 3
+	lowest_possible: 1
 
 	random_range_low: -6
 	random_range_high: 6
 
 	player_purchased_today: 0
 
-	new: (id, name, initialPrice, rangeLow, rangeHigh) =>
+	new: (id, name, initialPrice, rangeLow, rangeHigh, lowestPossible) =>
 		@id = id
 		@name = name
+
+		@lowest_possible = lowestPossible or 1
 
 		@price = initialPrice or 100
 		@price += love.math.random -50, 50
