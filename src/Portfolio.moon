@@ -1,15 +1,14 @@
+OwnedStock = require "src.OwnedStock"
+
 class Portfolio
 	stocks: {}
 
 	new: =>
 
-	getOwnedAmount: (id) =>
-		ret = @stocks[id]
-		return ret if ret ~= nil
-		return 0
+	getOwnedStock: (id) =>
+		if @stocks[id] == nil
+			@stocks[id] = OwnedStock id, 0
+		return @stocks[id]
 
-	addStock: (id, amount) =>
-		if @stocks[id] ~= nil
-			@stocks[id] += amount
-		else
-			@stocks[id] = amount
+	addStock: (id, amount) => @getOwnedStock(id)\add amount
+	removeStock: (id, amount) => @getOwnedStock(id)\remove amount

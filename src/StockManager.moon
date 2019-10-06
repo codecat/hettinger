@@ -13,3 +13,11 @@ class StockManager
 		for stock in *@stocks
 			return stock if stock.id == id
 		return nil
+
+	onStartOfDay: =>
+		for stock in *@stocks
+			stock\onStartOfDay!
+
+	onEndOfDay: =>
+		for stock in *@stocks
+			stock\onEndOfDay!
