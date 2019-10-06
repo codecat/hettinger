@@ -5,9 +5,6 @@ StoryDay = require "src.StoryDay"
 class StoryDay3 extends StoryDay
 	new: => super!
 
-	onStartOfDay: =>
-		g_game.force_action = true
-
 	getText: =>
 		ret   = "You enter the stocks building and look around. In front of you is a table of companies and their values."
 		ret ..= " You overhear a few people talk about a company called Electrotech: \"They have this big new announcement"

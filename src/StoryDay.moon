@@ -1,3 +1,7 @@
+suit = require "lib.suit"
+
+Utils = require "src.Utils"
+
 class StoryDay
 	stage: 0
 
@@ -8,5 +12,8 @@ class StoryDay
 
 	getText: => "A new day begins."
 	makeInterface: =>
+		if suit.Button("Sleep until morning ($" .. Utils.formatThousands(g_game.daily_cost) .. ")", suit.layout\row(200, 30)).hit
+			g_game\takeMoney g_game.daily_cost
+			g_game\nextDay!
 
-	isStocksInterfaceAvailable: => g_game.day_count >= 3
+	isStocksInterfaceAvailable: => true

@@ -23,9 +23,9 @@ class Game
 	story_flags: {}
 
 	intro_timer: 4.0
-	money: 0
 
-	force_action: false
+	money: 0
+	daily_cost: 10
 
 	stock_manager: nil
 	portfolio: nil
@@ -69,13 +69,9 @@ class Game
 		interface_y = 150 + @story_text\getHeight! + 20
 		suit.layout\reset 200, interface_y, 4, 4
 
-		if not @force_action and suit.Button("Sleep until morning", suit.layout\row(200, 30)).hit
-			@nextDay!
-			return
-
 		@story_day\makeInterface!
 
-		@makeStocksInterface! -- if @story_day\isStocksInterfaceAvailable!
+		@makeStocksInterface! if @story_day\isStocksInterfaceAvailable!
 
 	makeStocksInterface: =>
 		x, y = suit.layout\row 100, 30
@@ -146,15 +142,18 @@ class Game
 	nextDay: =>
 		if @story_day ~= nil
 			@story_day\onEndOfDay!
-		@stock_manager\onEndOfDay!
+
+			if @story_day\isStocksInterfaceAvailable!
+				@stock_manager\onEndOfDay!
 
 		@intro_timer = 4.0
 		@day_count += 1
-		@force_action = false
 
 		@story_day = @makeDay!
 
-		@stock_manager\onStartOfDay!
+		if @story_day\isStocksInterfaceAvailable!
+			@stock_manager\onStartOfDay!
+
 		@story_day\onStartOfDay!
 		@updateStoryText!
 
