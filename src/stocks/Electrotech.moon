@@ -4,4 +4,4 @@ class ElectrotechStock extends Stock
 	new: =>
 		super "ETCH", "Electrotech"
 
-		@price = love.math.random(8100, 8900)
+		@price = love.math.random(770, 890)
