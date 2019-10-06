@@ -30,6 +30,10 @@ class Game
 	money_max: 0
 	daily_cost: 10
 
+	stock_worth: 0
+	stock_worth_today: -1
+	stock_worth_yesterday: 0
+
 	stock_manager: nil
 	portfolio: nil
 	history: nil
@@ -131,7 +135,7 @@ class Game
 
 			change = price - priceYesterday
 
-			changeText = Utils.formatThousands(change)
+			changeText = Utils.formatThousands change
 			if change > 0
 				changeText = "+" .. changeText
 
@@ -156,6 +160,7 @@ class Game
 					@takeMoney price, "Bought " .. stock.name .. " stock"
 					@portfolio\addStock stock.id, 1
 					stock\onBought 1
+					@updateStockWorth!
 			else
 				suit.layout\col(60, 20)
 
@@ -164,6 +169,7 @@ class Game
 					@giveMoney price, "Sold " .. stock.name .. " stock"
 					@portfolio\removeStock stock.id, 1
 					stock\onSold 1
+					@updateStockWorth!
 			else
 				suit.layout\col(60, 20)
 
@@ -188,6 +194,18 @@ class Game
 		if @money < 0
 			@game_over = true
 
+	updateStockWorth: =>
+		@stock_worth = @getStockWorth!
+		@stock_worth_today = -1
+
+	getStockWorth: =>
+		ret = 0
+		print "Updating stock worth"
+		for stock in *@stock_manager.stocks
+			ownedStock = @portfolio\getOwnedStock stock.id
+			ret += stock\getPrice! * ownedStock.amount
+		return ret
+
 	makeDay: =>
 		return StoryDay1! if @day_count == 1
 		return StoryDay2! if @day_count == 2
@@ -200,6 +218,8 @@ class Game
 		@intro_timer = 4.0
 		if love.keyboard.isDown "f3"
 			@intro_timer = 1.0
+
+		@stock_worth_yesterday = @getStockWorth!
 
 		if @story_day ~= nil
 			@story_day\onEndOfDay!
@@ -219,6 +239,12 @@ class Game
 
 		@story_day\onStartOfDay!
 		@updateStoryText!
+
+		@updateStockWorth!
+
+		@stock_worth_today = @getStockWorth!
+		if @stock_worth_today == 0
+			@stock_worth_today = -1
 
 	updateStoryText: =>
 		@story_text = love.graphics.newText @font_normal, ""
@@ -243,16 +269,43 @@ class Game
 		love.graphics.setColor 0.10, 0.12, 0.13
 
 		love.graphics.setFont @font_normal
-		love.graphics.printf "Day " .. @day_count, @width / 2 - 100, 20, 200, "center"
+		love.graphics.printf "Day " .. @day_count, math.floor(@width * 0.5) - 100, 20, 200, "center"
 
 		love.graphics.setFont @font_status
-		love.graphics.printf Utils.formatThousands("$" .. @money), @width / 2 - 300, 44, 600, "center"
+		love.graphics.printf Utils.formatThousands("$" .. @money), math.floor(@width * 0.5) - 300, 44, 600, "center"
+
+		love.graphics.setFont @font_normal
+		love.graphics.printf "Stock worth", math.floor(@width * 0.75) - 100, 20, 200, "center"
+
+		love.graphics.setFont @font_status
+
+		stockWorthText = {}
+		table.insert stockWorthText, { 0.10, 0.12, 0.13 }
+		table.insert stockWorthText, Utils.formatThousands("$" .. @stock_worth)
+
+		if @stock_worth_today ~= -1
+			change = @stock_worth_today - @stock_worth_yesterday
+			changeText = Utils.formatThousands change
+			if change > 0
+				changeText = "+" .. changeText
+
+			if change > 0
+				table.insert stockWorthText, { 0.10, 0.80, 0.13 }
+			elseif change < 0
+				table.insert stockWorthText, { 0.80, 0.12, 0.13 }
+			else
+				table.insert stockWorthText, { 0.10, 0.12, 0.13 }
+			table.insert stockWorthText, " $" .. changeText
+
+		love.graphics.setColor 1, 1, 1
+		love.graphics.printf stockWorthText, math.floor(@width * 0.75) - 300, 44, 600, "center"
 
 	draw: =>
 		love.graphics.clear 0.97, 0.95, 0.94
 
 		@drawStatusBar!
 
+		love.graphics.setColor 0.10, 0.12, 0.13
 		love.graphics.draw @story_text, @content_left, 110
 
 		@history\draw!
