@@ -219,7 +219,7 @@ class Game
 		return StoryDay3! if @day_count == 3
 		return StoryDay4! if @day_count == 4
 
-		return CharityDriveStoryDay! if @day_count % 5 == 0
+		return CharityDriveStoryDay! if @day_count % 8 == 0
 
 		return StoryDay!
 
