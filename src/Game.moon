@@ -80,7 +80,7 @@ class Game
 		suit.layout\reset @content_left, interface_y, 4, 4
 
 		if @game_over
-			suit.layout\push @width / 2 - 96, @height / 2 + 76
+			suit.layout\push @width / 2 - 96, @height / 2 + 64
 			if suit.Button("Restart game", suit.layout\row(192, 20)).hit
 				export g_game = Game!
 				g_game\start!
@@ -228,15 +228,21 @@ class Game
 		@history\draw!
 
 		if @game_over
-			love.graphics.setColor 1 - 0.97, 1 - 0.95, 1 - 0.94, 0.5
+			love.graphics.setColor 1 - 0.97, 1 - 0.95, 1 - 0.94, 0.85
 			love.graphics.rectangle "fill", 0, 0, @width, @height
 
 			love.graphics.setColor 1 - 0.97, 1 - 0.95, 1 - 0.94
-			love.graphics.rectangle "fill", @width / 2 - 200, @height / 2 - 100, 400, 200, 2, 2
+			love.graphics.rectangle "fill", @width / 2 - 200, @height / 2 - 100, 400, 200, 4, 4
 
 			love.graphics.setColor 1 - 0.10, 1 - 0.12, 1 - 0.13
 			love.graphics.setFont @font_normal_bold
 			love.graphics.printf "GAME OVER", @width / 2 - 200, @height / 2 - 90, 400, "center"
+
+			love.graphics.setFont @font_normal
+			love.graphics.printf "You went bankrupt. All of your remaining stocks vanished and were given to the poor. So you kind of did something good after all! Your largest amount of money owned was:", @width / 2 - 190, @height / 2 - 70, 380
+
+			love.graphics.setFont @font_status
+			love.graphics.printf Utils.formatThousands("$" .. @money_max), @width / 2 - 200, @height / 2 - 10, 400, "center"
 
 		love.graphics.setFont @font_normal
 		suit.draw!
