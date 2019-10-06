@@ -1,5 +1,3 @@
-suit = require "lib.suit"
-
 StoryDay = require "src.StoryDay"
 
 class StoryDay3 extends StoryDay

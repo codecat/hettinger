@@ -6,6 +6,8 @@ StoryDay = require "src.StoryDay"
 StoryDay1 = require "src.story.StoryDay1"
 StoryDay2 = require "src.story.StoryDay2"
 StoryDay3 = require "src.story.StoryDay3"
+StoryDay4 = require "src.story.StoryDay4"
+CharityDriveStoryDay = require "src.story.CharityDriveStoryDay"
 
 StockManager = require "src.StockManager"
 Portfolio = require "src.Portfolio"
@@ -94,6 +96,11 @@ class Game
 			suit.layout\pop!
 		else
 			@story_day\makeInterface!
+
+			if love.keyboard.isDown "f3"
+				if suit.Button("(dev) give $5000", suit.layout\row(200, 20)).hit
+					@giveMoney 5000, "dev grant"
+
 			@makeStocksInterface! if @story_day\isStocksInterfaceAvailable!
 
 	makeStocksInterface: =>
@@ -210,6 +217,10 @@ class Game
 		return StoryDay1! if @day_count == 1
 		return StoryDay2! if @day_count == 2
 		return StoryDay3! if @day_count == 3
+		return StoryDay4! if @day_count == 4
+
+		return CharityDriveStoryDay! if @day_count % 5 == 0
+
 		return StoryDay!
 
 	nextDay: =>
