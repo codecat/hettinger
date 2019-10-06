@@ -58,7 +58,6 @@ class Game
 
 	start: =>
 		@nextDay!
-		@giveMoney 5000, "Test money lorem ipsum dolor sit amet"
 
 	keypressed: (key, scancode, isrepeat) => suit.keypressed key
 	textedited: (text, start, length) => suit.textedited text, start, length

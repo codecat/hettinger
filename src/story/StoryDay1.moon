@@ -28,7 +28,4 @@ class StoryDay1 extends StoryDay
 				g_game\giveMoney 100, "Found on street"
 				g_game\nextStoryStage!
 
-		if suit.Button("Give me free money", suit.layout\newline!).hit
-			g_game\giveMoney 1234, "Free money"
-
 	isStocksInterfaceAvailable: => false
