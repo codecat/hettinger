@@ -4,6 +4,7 @@ class Portfolio
 	stocks: {}
 
 	new: =>
+		@stocks = {}
 
 	getOwnedStock: (id) =>
 		if @stocks[id] == nil

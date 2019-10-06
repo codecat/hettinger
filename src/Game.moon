@@ -42,6 +42,10 @@ class Game
 		@font_mono = love.graphics.newFont "res/fonts/Cascadia.ttf", 12
 		@font_status = love.graphics.newFont 24
 
+		@sound_intro = love.audio.newSource "res/audio/intro.wav", "static"
+		@sound_coin = love.audio.newSource "res/audio/coin.wav", "static"
+		@sound_coin\setVolume 0.1
+
 		@stock_manager = StockManager!
 		@portfolio = Portfolio!
 		@history = History!
@@ -75,7 +79,7 @@ class Game
 			@makeInterface!
 
 	makeInterface: =>
-		interface_y = 150 + @story_text\getHeight! + 20
+		interface_y = 110 + @story_text\getHeight! + 20
 		suit.layout\reset @content_left, interface_y, 4, 4
 
 		if @game_over
@@ -169,9 +173,17 @@ class Game
 			@money_max = @money
 		@history\add amount, description
 
+		if @intro_timer <= 1
+			@sound_coin\stop!
+			@sound_coin\play!
+
 	takeMoney: (amount, description) =>
 		@money -= amount
 		@history\add -amount, description
+
+		if @intro_timer <= 1
+			@sound_coin\stop!
+			@sound_coin\play!
 
 		if @money < 0
 			@game_over = true
@@ -183,15 +195,20 @@ class Game
 		return StoryDay!
 
 	nextDay: =>
+		love.audio.stop!
+
+		@intro_timer = 4.0
+		if love.keyboard.isDown "f3"
+			@intro_timer = 1.0
+
 		if @story_day ~= nil
 			@story_day\onEndOfDay!
 
 			if @story_day\isStocksInterfaceAvailable!
 				@stock_manager\onEndOfDay!
 
-		@intro_timer = 4.0
-		if love.keyboard.isDown "f3"
-			@intro_timer = 1.0
+		@sound_intro\stop!
+		@sound_intro\play!
 
 		@day_count += 1
 
@@ -231,14 +248,12 @@ class Game
 		love.graphics.setFont @font_status
 		love.graphics.printf Utils.formatThousands("$" .. @money), @width / 2 - 300, 44, 600, "center"
 
-	drawStoryText: =>
-		love.graphics.draw @story_text, @content_left, 150
-
 	draw: =>
 		love.graphics.clear 0.97, 0.95, 0.94
 
 		@drawStatusBar!
-		@drawStoryText!
+
+		love.graphics.draw @story_text, @content_left, 110
 
 		@history\draw!
 
@@ -251,7 +266,7 @@ class Game
 
 			love.graphics.setColor 1 - 0.10, 1 - 0.12, 1 - 0.13
 			love.graphics.setFont @font_normal_bold
-			love.graphics.printf "GAME OVER", @width / 2 - 200, @height / 2 - 90, 400, "center"
+			love.graphics.printf "Game over.", @width / 2 - 200, @height / 2 - 90, 400, "center"
 
 			love.graphics.setFont @font_normal
 			love.graphics.printf "You went bankrupt. All of your remaining stocks vanished and were given to the poor. So you kind of did something good after all! Your largest amount of money owned was:", @width / 2 - 190, @height / 2 - 70, 380
@@ -271,7 +286,7 @@ class Game
 			love.graphics.setColor 1 - 0.97, 1 - 0.95, 1 - 0.94, alpha
 			love.graphics.rectangle "fill", 0, 0, @width, @height
 
-			if @intro_timer < 3.25
+			if @intro_timer < 3
 				love.graphics.setColor 1 - 0.10, 1 - 0.12, 1 - 0.13, alpha
 				love.graphics.setFont @font_status
 				love.graphics.printf "Day " .. @day_count, @width / 2 - 300, @height / 2 - 60, 600, "center"

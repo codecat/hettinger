@@ -4,6 +4,7 @@ class History
 	items: {}
 
 	new: =>
+		@items = {}
 
 	add: (amount, description) =>
 		newItem = HistoryItem amount, description, g_game.day_count, g_game.money
