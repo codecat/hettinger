@@ -10,7 +10,7 @@ class StoryDay1 extends StoryDay
 			g_game\setFlag "day1_skip_20"
 
 	getText: =>
-		ret   = "Welcome to the town of Scranton. You're not entirely sure how you got here, but you're here now,"
+		ret   = "Welcome to the town of Hettinger. You're not entirely sure how you got here, but you're here now,"
 		ret ..= " without cash on hand. Fortunately for you, it looks like someone dropped a $20 bill right in front"
 		ret ..= " of you on the sidewalk! How convenient."
 
