@@ -16,7 +16,7 @@ class StockManager
 		table.insert @stocks, Stock("BOB", "Bob", 30, -20, 30)
 		table.insert @stocks, Stock("MCRO", "Macro Software Inc.", 140)
 		table.insert @stocks, Stock("CCF", "CC Flooring", 60)
-		table.insert @stocks, Stock("CCF", "Backyard Mechanics", 80)
+		table.insert @stocks, Stock("BYMA", "Backyard Mechanics", 80)
 		table.insert @stocks, Stock("BTC", "Buttcoin", 7300, -200, 200, 1200)
 		table.insert @stocks, Stock("4AS", "4-A's Touchless Car Wash", 120)
 		table.insert @stocks, Stock("HBBY", "Healthy Baby Group", 170)
